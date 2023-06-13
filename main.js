@@ -14,7 +14,8 @@ const createWindow = () => {
         webPreferences: {
             nodeIntegration: true,
             preload: path.resolve(__dirname, './preload/index')
-        }
+        },
+        show:false
     })
 
     win.loadURL('http://localhost:5173')
@@ -24,6 +25,10 @@ const createWindow = () => {
     wc.openDevTools()
 
     winState.manage(win)
+
+    win.on('ready-to-show',()=>{
+        win.show()
+    })
 }
 
 app.whenReady().then(() => {
