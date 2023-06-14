@@ -27,18 +27,6 @@ const readFile = (url) => {
 }
 
 const updateFile = async (url, data) => {
-
-    const oldStr = await readFile(url)
-
-    // let compareUrl = url.replace(path.basename(url), path.basename(url,'.json')+'(old).json')
-
-    // fs.writeFile(compareUrl, oldStr, (err) => {
-    // })
-
-    var difference = fileDiff.diffChars(oldStr,data);
-    console.log('difference',difference)
-
-
     return new Promise((resolve, rejects) => {
         fs.writeFile(url, data, (err) => {
             if (err) {
@@ -47,12 +35,12 @@ const updateFile = async (url, data) => {
                 resolve('更新成功')
             }
         })
-    }) 
+    })
 }
 
 const Compare = () => {
     const path = "C:\\Program Files\\Notepad++\\notepad++.exe"
-    exec(path, function(err, data) { if (err) { throw err; } console.log(data.toString()); }); 
+    exec(path, function(err, data) { if (err) { throw err; } console.log(data.toString()); });
 }
 
 contextBridge.exposeInMainWorld('myApi', {
