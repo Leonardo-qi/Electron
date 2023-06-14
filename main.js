@@ -1,6 +1,11 @@
-const { app, BrowserWindow } = require('electron')
+const { log } = require('console')
+const { app, BrowserWindow, ipcMain, dialog } = require('electron')
 const path = require('path')
 const WinState = require('electron-win-state').default
+
+require('./controller/getPath')
+require('./controller/dialog')
+
 
 const createWindow = () => {
 
@@ -15,7 +20,7 @@ const createWindow = () => {
             nodeIntegration: true,
             preload: path.resolve(__dirname, './preload/index')
         },
-        show:false
+        show: false
     })
 
     win.loadURL('http://localhost:5173')
@@ -26,7 +31,7 @@ const createWindow = () => {
 
     winState.manage(win)
 
-    win.on('ready-to-show',()=>{
+    win.on('ready-to-show', () => {
         win.show()
     })
 }
@@ -42,3 +47,4 @@ app.whenReady().then(() => {
 app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') app.quit()
 })
+
