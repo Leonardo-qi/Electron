@@ -15,7 +15,8 @@
     "electron-win-state": "^1.1.22",
     "highlight.js": "^11.8.0",
     "vue": "^3.2.47",
-    "vue-code-diff": "^1.2.0"
+    "vue-code-diff": "^1.2.0",
+    "vue-router": "^4.0.0-beta.6"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.1.0",

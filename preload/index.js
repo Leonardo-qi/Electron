@@ -14,6 +14,10 @@ const dialogFn = (data) => {
     ipcRenderer.invoke('on-dialog-event', data)
 }
 
+const dialogMessage = (data) => {
+    ipcRenderer.invoke('on-message-event', data)
+}
+
 const readFile = (url) => {
     return new Promise((resolve, rejects) => {
         fs.readFile(url, 'utf-8', (err, dataStr) => {
@@ -38,15 +42,11 @@ const updateFile = async (url, data) => {
     })
 }
 
-const Compare = () => {
-    const path = "C:\\Program Files\\Notepad++\\notepad++.exe"
-    exec(path, function(err, data) { if (err) { throw err; } console.log(data.toString()); });
-}
 
 contextBridge.exposeInMainWorld('myApi', {
     handleUpdate,
     dialogFn,
     readFile,
     updateFile,
-    Compare
+    dialogMessage
 })

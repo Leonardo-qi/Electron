@@ -25,7 +25,7 @@ const createWindow = () => {
 
   const wc = win.webContents
 
-  //   wc.openDevTools()
+    wc.openDevTools()
 
   winState.manage(win)
 
