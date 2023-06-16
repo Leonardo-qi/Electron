@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref,reactive } from 'vue'
 
 let pathUrl = ref('')
 let fileContent = ref('')
@@ -52,14 +52,44 @@ const handleBtn = async () => {
 
 }
 
+const form = reactive({
+  name: '',
+  region: '',
+  date1: '',
+  date2: '',
+  delivery: false,
+  type: [],
+  resource: '',
+  desc: '',
+})
+
+const onSubmit = () => {
+  console.log('submit!')
+}
+
 </script>
 
 <template>
+    <el-form :model="form" label-width="120px">
+    <el-form-item label="文件名：">
+      <el-input v-model="form.name" />
+    </el-form-item>
+    <el-form-item label="服务地址：">
+      <el-select v-model="form.region" placeholder="please select your zone">
+        <el-option label="Zone one" value="shanghai" />
+        <el-option label="Zone two" value="beijing" />
+      </el-select>
+    </el-form-item>
+    <el-form-item>
+      <el-button type="primary" @click="onSubmit">Create</el-button>
+      <el-button>Cancel</el-button>
+    </el-form-item>
+  </el-form>
   <span>文件路径：</span>
   <span style="cursor: pointer;" @click="handleFocus" v-if="pathUrl">{{ pathUrl }}</span>
   <span style="cursor: pointer;" @click="handleFocus" v-else>请选择文件路径</span>
   <div @click="handleBtn">更新文件</div>
-  <div @click="handleRead">读取文件</div>
+  <!-- <div @click="handleRead">读取文件</div> -->
   <div v-if="fileContent">
     <span>文件内容:</span>
     <div>{{ fileContent }}</div>
