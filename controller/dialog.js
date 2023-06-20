@@ -4,6 +4,7 @@ const fs = require('fs')
 const WinState = require('electron-win-state').default
 
 const { app, ipcMain, dialog, BrowserWindow } = require('electron')
+const { log } = require('console')
 
 // 失败提示框
 ipcMain.handle('on-dialog-event', (e, { title, content }) => {
@@ -43,9 +44,12 @@ ipcMain.handle('on-message-event', (e, data, filePath) => {
 
     win.loadURL('http://localhost:5173/fileDiff')
 
+    win.webContents.openDevTools()
+
     win.maximize()
 
     win.on('ready-to-show', () => {
+      console.log('56789')
       win.show()
     })
   }

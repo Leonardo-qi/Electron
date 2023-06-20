@@ -14,6 +14,7 @@ let renderNothingWhenEmpty = ref(false)
 
 onMounted(() => {
     const {oldValue,newValue} = myDiff.getList()
+    console.log(oldValue,newValue);
     oldStr.value = oldValue
     newStr.value = newValue
 })
@@ -22,6 +23,7 @@ onMounted(() => {
 </script>
 
 <template>
+    <div>1231321</div>
     <codediff :old-string="oldStr" :new-string="newStr" :context="context" :output-format="outputFormat"
         :draw-file-list="drawFileList" :render-nothing-when-empty="renderNothingWhenEmpty" :diff-style="diffStyle"
         :file-name="fileName" :is-show-no-change="isShowNoChange" />

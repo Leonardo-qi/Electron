@@ -1,9 +1,17 @@
+
 <script setup>
 import { ref, reactive } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
+import axios from "axios";
+
 let pathUrl = ref('')
 let fileContent = ref('')
+
+const serviceUrl = [
+  { label: 'http://172.17.17.81:10205/v2/api-docs', value: '/api/v2/api-docs' },
+  { label: '本地内容', value: 1 },
+]
 
 const newObj = `{
     "id": "123456789",
@@ -48,6 +56,9 @@ const rules = reactive({
   fileFormat: [
     { required: true, message: '请选择文件格式', trigger: 'change' },
   ],
+  serviceUrl: [
+    { required: true, message: '请选择服务地址', trigger: 'change' },
+  ],
   fileUrl: [
     { required: true, message: '请选择文件路径', trigger: 'blur' },
   ],
@@ -75,9 +86,20 @@ const onSubmit = async (formEl) => {
 }
 
 const writeFile = (filePath, oldValue) => {
-  myApi.updateFile(filePath, newObj).then(res => {
-    myApi.dialogMessage({ oldValue, newValue: newObj }, filePath)
-  })
+
+  if (fileForm.serviceUrl === 1) {
+    myApi.updateFile(filePath, newObj).then(res => {
+      myApi.dialogMessage({ oldValue, newValue:newObj }, filePath)
+    })
+  } else {
+    axios.get(fileForm.serviceUrl).then(res => {
+      let newValue = JSON.stringify(res.data)
+      myApi.updateFile(filePath, newValue).then(res => {
+        myApi.dialogMessage({ oldValue, newValue }, filePath)
+      })
+    })
+  }
+
 }
 
 const fileDialog = (err) => {
@@ -120,8 +142,7 @@ const handleReset = (formEl) => {
     </el-form-item>
     <el-form-item label="服务地址：" prop="serviceUrl">
       <el-select v-model="fileForm.serviceUrl" placeholder="请选择服务地址">
-        <el-option label="Zone one" value="shanghai" />
-        <el-option label="Zone two" value="beijing" />
+        <el-option :label="item.label" :value="item.value" v-for="item in serviceUrl" :key="item.value" />
       </el-select>
     </el-form-item>
     <el-form-item label="文件路径：" prop="fileUrl">
