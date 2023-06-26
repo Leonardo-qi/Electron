@@ -21,9 +21,11 @@ ipcMain.handle('on-message-event', (e, data, filePath) => {
   })
 
   if (res === 1) {
-    fs.readFile(filePath, 'utf8', (err, data) => {
-      if (err) throw err
-    })
+    // console.log('filePath',filePath)
+    // fs.open(filePath, 'r', (err, data) => {
+    //   if (err) throw err
+    //   console.log('文件一打开')
+    // })
   }
 
   if (res === 2) {
@@ -53,4 +55,5 @@ ipcMain.handle('on-message-event', (e, data, filePath) => {
       win.show()
     })
   }
+
 })

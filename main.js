@@ -1,5 +1,4 @@
-const { log } = require('console')
-const { app, BrowserWindow, ipcMain, dialog } = require('electron')
+const { app, BrowserWindow } = require('electron')
 const path = require('path')
 const WinState = require('electron-win-state').default
 
@@ -25,9 +24,12 @@ const createWindow = () => {
 
   const wc = win.webContents
 
-    wc.openDevTools()
+  wc.openDevTools()
+
 
   winState.manage(win)
+
+  win.maximize()
 
   win.on('ready-to-show', () => {
     win.show()

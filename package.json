@@ -17,6 +17,10 @@
     "element-plus": "^2.3.6",
     "express": "^4.17.1",
     "highlight.js": "^11.8.0",
+    "less": "^4.1.2",
+    "less-loader": "^10.2.0",
+    "sass": "^1.52.1",
+    "sass-loader": "^13.0.0",
     "vue": "^3.2.47",
     "vue-code-diff": "^1.2.0",
     "vue-router": "^4.0.0-beta.6"
