@@ -49,6 +49,10 @@ const createWindow = () => {
   win.on('ready-to-show', () => {
     win.show()
   })
+
+  win.on("close", () => {
+    
+  })
 }
 
 app.whenReady().then(() => {
