@@ -8,11 +8,8 @@ import 'element-plus/dist/index.css'
 import 'element-plus/theme-chalk/index.css';
 
 
-import Sidebar from './components/navigation/sidebar.vue'
-
 const app = createApp(App)
 
-app.component('Sidebar',Sidebar)
 
 app.use(ElementPlus)
 

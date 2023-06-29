@@ -42,7 +42,7 @@ const createWindow = () => {
 
   winState.manage(win)
 
-  win.maximize()
+  // win.maximize()
 
   Menu.setApplicationMenu(mainMenu)
 
@@ -51,7 +51,7 @@ const createWindow = () => {
   })
 
   win.on("close", () => {
-    
+
   })
 }
 

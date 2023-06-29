@@ -2,6 +2,7 @@ import { createWebHistory, createRouter } from 'vue-router'
 
 const history = createWebHistory()
 
+const homePage = () => import('../views/homePage.vue')
 const fileUpdatePage = () => import('../views/fileUpdatePage/index.vue')
 const fileDiff = () => import('../views/fileDiff.vue')
 const ads = () => import('../views/ads.vue')
@@ -13,17 +14,29 @@ const router = createRouter({
     routes: [
         {
             path: '/',
-            redirect: "/fileUpdatePage/index"
+            redirect: "/homePage"
         },
         {
-            path: '/fileUpdatePage/index',
-            name: 'fileUpdatePage',
-            component: fileUpdatePage
-        },
-        {
-            path: '/ads',
-            name: 'ads',
-            component: ads
+            path: '/homePage',
+            name: 'homePage',
+            component: homePage,
+            children: [
+                {
+                    path: '',
+                    name: 'default',
+                    component: fileUpdatePage
+                },
+                {
+                    path: '/fileUpdatePage/index',
+                    name: 'fileUpdatePage',
+                    component: fileUpdatePage
+                },
+                {
+                    path: '/ads',
+                    name: 'ads',
+                    component: ads
+                },
+            ]
         },
         {
             path: '/fileDiff',
