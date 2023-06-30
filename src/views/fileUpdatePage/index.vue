@@ -4,7 +4,6 @@ import axios from "axios"
 import { ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { CirclePlus, EditPen } from '@element-plus/icons-vue'
-
 const newObj = `{
     "id": "123456789",
     "name": "无敌奥特曼",
@@ -55,7 +54,8 @@ const ruleFormRefArr = ref([
                 { required: true, message: '请选择文件路径', trigger: 'blur' },
             ],
         },
-        isFile: false
+        isFile: false,
+        isfileUrl: false
     }
 ])
 
@@ -65,26 +65,18 @@ const handleFocus = async (index) => {
 }
 
 // 更新文件
-const onSubmit = async (formEl, index) => {
+const onSubmit = async (index) => {
+    const fileForm = JSON.parse(JSON.stringify(ruleFormRefArr.value[index].fileForm))
+    const isfileForm = Object.values(fileForm).every(item => item)
+    if (!isfileForm) return ElMessage.error('请完整填写更新信息！')
+    const filePath = `${fileForm.fileUrl}/${fileForm.name}${fileForm.fileFormat}`
+    try {
+        const oldValue = await myApi.readFile(filePath)
+        writeFile(filePath, oldValue, index)
+    } catch (err) {
+        fileDialog(err, index)
+    }
 
-    if (!formEl[index]) return
-
-    const fileForm = ruleFormRefArr.value[index].fileForm
-
-    await formEl[index].validate(async (valid) => {
-
-        if (valid) {
-
-            const filePath = `${fileForm.fileUrl}/${fileForm.name}${fileForm.fileFormat}`
-            try {
-                const oldValue = await myApi.readFile(filePath)
-                writeFile(filePath, oldValue, index)
-            } catch (err) {
-                fileDialog(err, index)
-            }
-
-        }
-    })
 }
 
 // 将内容写入文件
@@ -165,11 +157,18 @@ const fileBlur = (index) => {
             <el-button type="primary" :icon="CirclePlus" @click="handleAdd">新增</el-button>
         </div>
         <div class="update_box" v-for="(item, index) in ruleFormRefArr">
+            <div class="update_btn">
+                <el-button type="primary" size="small" @click="onSubmit(index)">更新</el-button>
+                <!-- <el-button type="danger" @click="handleDelete(index)">删除</el-button> -->
+            </div>
             <el-form :model="item.fileForm" ref="ruleFormRef" label-width="100px" :rules="item.rules">
                 <el-form-item label="文件名：" prop="name">
                     <!-- 展示文件名 -->
-                    <span class="span_box" v-if="item.fileForm.name && !item.isFile" @click="handlefileName(index)">{{
-                        item.fileForm.name }}</span>
+                    <el-tooltip class="box-item" effect="dark" v-if="item.fileForm.name && !item.isFile"
+                        :content="item.fileForm.name" placement="bottom-start">
+                        <span class="span_box span_hidden" @click="handlefileName(index)">{{
+                            item.fileForm.name }}</span>
+                    </el-tooltip>
                     <!-- 提示输入文件名 -->
                     <span class="span_box" v-else-if="!item.fileForm.name && !item.isFile"
                         @click="handlefileName(index)">文件名称
@@ -190,13 +189,18 @@ const fileBlur = (index) => {
                     </el-select>
                 </el-form-item>
                 <el-form-item label="文件路径：" prop="fileUrl">
-                    <el-input class="input_width" v-model="item.fileForm.fileUrl" @click="handleFocus(index)"
-                        placeholder="请选择文件路径" />
+                    <!-- 文件路径展示  -->
+                    <el-tooltip class="box-item" effect="dark" v-if="item.fileForm.fileUrl" :content="item.fileForm.fileUrl"
+                        placement="bottom-start">
+                        <span class="span_box span_hidden" @click="handleFocus(index)">{{
+                            item.fileForm.fileUrl }}</span>
+                    </el-tooltip>
+                    <!-- 选择文件路径 -->
+                    <span class="span_box" v-else @click="handleFocus(index)">文件路径
+                        <EditPen style="width: 10px;height: 10px;" />
+                    </span>
                 </el-form-item>
-                <!-- <el-form-item>
-                    <el-button type="primary" @click="onSubmit(ruleFormRef, index)">更新</el-button>
-                    <el-button type="danger" @click="handleDelete(index)">删除</el-button>
-                </el-form-item> -->
+
             </el-form>
         </div>
     </div>
@@ -225,17 +229,33 @@ const fileBlur = (index) => {
         width: 33%;
         height: calc(100% - 60px);
         background: #fff;
-        padding: 20px;
+        // padding: 0 20px;
         overflow: hidden;
         overflow-y: auto;
         border: 1px solid rgb(185, 184, 184);
+        border-radius: 10px;
+
+        .update_btn {
+            height: 40px;
+            display: flex;
+            border-bottom: 1px solid #b9b8b8;
+            align-items: center;
+            padding: 0 20px;
+        }
 
         .input_width {
             width: 214px;
         }
 
         .span_box {
+            width: 80%;
             cursor: pointer;
+        }
+
+        .span_hidden {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
     }
 }
