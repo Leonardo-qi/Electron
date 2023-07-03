@@ -20,8 +20,8 @@ body {
   align-items: center;
   justify-content: center;
   background-color: #fff;
+  color: black;
 }
-
 
 /deep/.el-menu {
   height: 100%;
