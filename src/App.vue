@@ -21,6 +21,7 @@ body {
   justify-content: center;
   background-color: #fff;
   color: black;
+  overflow-x: hidden;
 }
 
 /deep/.el-menu {

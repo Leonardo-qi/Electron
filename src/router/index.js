@@ -5,6 +5,7 @@ const history = createWebHistory()
 const homePage = () => import('../views/homePage.vue')
 const fileUpdatePage = () => import('../views/fileUpdatePage/index.vue')
 const fileDiff = () => import('../views/fileDiff.vue')
+const checkFile = () => import('../views/checkFile/index.vue')
 const ads = () => import('../views/ads.vue')
 
 
@@ -42,6 +43,11 @@ const router = createRouter({
             path: '/fileDiff',
             name: 'fileDiff',
             component: fileDiff
+        },
+        {
+            path: '/checkFile',
+            name: 'checkFile',
+            component: checkFile
         }
     ]
 })

@@ -17,18 +17,10 @@ ipcMain.handle('on-message-event', (e, data, filePath) => {
     type: 'none',
     title: '文件更新成功',
     message: '更新成功',
-    buttons: ['关闭', '查看文件', '查看对比差异'],
+    buttons: ['关闭', '查看对比差异'],
   })
 
   if (res === 1) {
-    // console.log('filePath',filePath)
-    // fs.open(filePath, 'r', (err, data) => {
-    //   if (err) throw err
-    //   console.log('文件一打开')
-    // })
-  }
-
-  if (res === 2) {
     const win = new BrowserWindow({
       width: 800,
       height: 600,
@@ -57,3 +49,32 @@ ipcMain.handle('on-message-event', (e, data, filePath) => {
   }
 
 })
+
+// 查看文件
+ipcMain.handle('on-check-file', (e, data, filePath) => {
+  const win = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: {
+      nodeIntegration: true,
+      preload: path.resolve(__dirname, '../preload/checkFile.js'),
+    },
+    show: false,
+  })
+
+  // 向新窗口传递参数
+  win.webContents.on('did-finish-load', () => {
+    win.webContents.send('value', data)
+  })
+
+  win.loadURL('http://localhost:5173/checkFile')
+
+  win.webContents.openDevTools()
+
+  win.maximize()
+
+  win.on('ready-to-show', () => {
+    win.show()
+  })
+})
+
