@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onBeforeMount,onMounted, ref } from 'vue'
 
 let fileStr = ref('')
 let size = ref('')

@@ -1,9 +1,11 @@
 
 <script setup>
 import axios from "axios"
-import { onBeforeMount, ref, onBeforeUnmount } from 'vue'
+import { onBeforeMount, ref, onBeforeUnmount, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { CirclePlus, EditPen } from '@element-plus/icons-vue'
+import { ElLoading } from "element-plus";
+
 const newObj = '{"a":1,"s":"1"}'
 
 // 服务地址
@@ -58,11 +60,18 @@ const handleFocus = async (index) => {
     ruleFormRefArr.value[index].fileForm.fileUrl = await myApi.handleUpdate()
 }
 
+const loading = ref('')
+
 // 更新文件
 const onSubmit = async (index) => {
     const fileForm = JSON.parse(JSON.stringify(ruleFormRefArr.value[index].fileForm))
     const isfileForm = Object.values(fileForm).every(item => item)
     if (!isfileForm) return ElMessage.error('请完整填写更新信息！')
+    loading.value = ElLoading.service({
+        lock: true,
+        text: "文件更新中",
+        background: "rgba(0, 0, 0, 0.7)"
+    });
     const filePath = `${fileForm.fileUrl}/${fileForm.name}${fileForm.fileFormat}`
     try {
         const oldValue = await myApi.readFile(filePath)
@@ -88,12 +97,14 @@ const writeFile = (filePath, oldValue, index) => {
     const fileForm = ruleFormRefArr.value[index].fileForm
     if (fileForm.serviceUrl === 1) {
         myApi.updateFile(filePath, newObj).then(res => {
+            loading.value.close()
             myApi.dialogMessage({ oldValue, newValue: newObj }, filePath)
         })
     } else {
         axios.get(fileForm.serviceUrl).then(res => {
             let newValue = JSON.stringify(res.data)
             myApi.updateFile(filePath, newValue).then(res => {
+                loading.value.close()
                 myApi.dialogMessage({ oldValue, newValue }, filePath)
             })
         })
@@ -117,9 +128,11 @@ const fileDialog = (err, index) => {
             const filePath = `${fileForm.fileUrl}/${fileForm.name}${fileForm.fileFormat}`
             writeFile(filePath, '', index)
         }).catch(() => {
+            loading.value.close()
             return
         })
     } else {
+        loading.value.close()
         return ElMessage.error(err)
     }
 
@@ -160,12 +173,14 @@ onBeforeMount(() => {
 
 onBeforeUnmount(() => {
     localStorage.setItem('ruleFormRefArr', JSON.stringify(ruleFormRefArr.value))
-    ElLoading.service({
-        lock: true,
-        text: "Loading",
-        background: "rgba(0, 0, 0, 0.7)"
-    });
 })
+
+
+
+onMounted(() => {
+
+})
+
 </script>
 
 <template>
