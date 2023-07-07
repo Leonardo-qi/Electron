@@ -61,7 +61,8 @@ const readFile = (url) => {
 // 更新文件
 const updateFile = async (url, data) => {
   return new Promise((resolve, rejects) => {
-    fs.writeFile(url, data, (err) => {
+    
+    fs.writeFile(url, JSON.stringify(JSON.parse(data), null, 2), (err) => {
       if (err) {
         rejects({ msg: '更新文件失败' })
       } else {
