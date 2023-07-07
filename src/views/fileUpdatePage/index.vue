@@ -187,7 +187,7 @@ onMounted(() => {
     <div class="main_body">
         <div class="add_box">
             <el-button type="primary" :icon="CirclePlus" @click="handleAdd">新增</el-button>
-            <el-button type="primary" :icon="CirclePlus" @click="handleSave">本地村粗</el-button>
+            <el-button type="primary" :icon="CirclePlus" @click="handleSave">本地</el-button>
         </div>
         <div class="flex_box">
             <div class="update_box" :key="index" v-for="(item, index) in ruleFormRefArr">
