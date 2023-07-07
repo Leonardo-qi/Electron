@@ -24,14 +24,9 @@ const mainMenu = Menu.buildFromTemplate([
 //   { label: '退出', click: () => { app.quit(); } }
 // ])
 
-// 托盘菜单数组
-const trayMenu = Menu.buildFromTemplate([
-  { label: '退出', click: () => { app.quit(); } }
-])
-
 // 初始化托盘
 const createTray = (win) => {
-  tray = new Tray('1.jpg')
+  const tray = new Tray('1.jpg')
   tray.setToolTip('桌面应用')
 
   tray.on('click', e => {
@@ -42,7 +37,15 @@ const createTray = (win) => {
       win.isVisible() ? win.hide() : win.show()
     }
   })
-
+  // 托盘菜单数组
+  const trayMenu = Menu.buildFromTemplate([
+    {
+      label: '退出', click: () => {
+        app.quit();
+        tray.destroy();
+      }
+    }
+  ])
   tray.setContextMenu(trayMenu)
 }
 
@@ -76,18 +79,16 @@ const createWindow = () => {
 
   winState.manage(win)
 
-  // 窗口 最大化
   win.maximize()
 
-  // 创建菜单
   Menu.setApplicationMenu(mainMenu)
-
-  // 创建托盘
-  createTray(win)
 
   win.on('ready-to-show', () => {
     win.show()
   })
+
+  // 创建托盘
+  createTray(win)
 
   win.on('close', (event) => {
     event.preventDefault(); // 取消默认的关闭行为
