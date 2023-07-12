@@ -1,7 +1,7 @@
 
 <script setup>
 import axios from "axios"
-import { onBeforeMount, ref, onBeforeUnmount, onMounted } from 'vue'
+import { onBeforeMount, ref, onBeforeUnmount, onMounted, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { CirclePlus, EditPen } from '@element-plus/icons-vue'
 import { ElLoading } from "element-plus";
@@ -11,6 +11,7 @@ const newObj = '{"a":1,"s":"1"}'
 // 服务地址
 const serviceUrl = [
     { label: 'http://172.17.17.81:10205/v2/api-docs', value: '/api/v2/api-docs' },
+    { label: 'http://172.17.17.81:10205/v3/api-docs', value: '/api/v3/api-docs' },
     { label: '本地内容', value: 1 },
 ]
 
@@ -174,8 +175,6 @@ onBeforeMount(() => {
 onBeforeUnmount(() => {
     localStorage.setItem('ruleFormRefArr', JSON.stringify(ruleFormRefArr.value))
 })
-
-
 
 onMounted(() => {
 
