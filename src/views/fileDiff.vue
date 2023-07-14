@@ -1,5 +1,7 @@
 <script setup>
-import { onMounted, ref, } from 'vue'
+import { onMounted, ref } from 'vue'
+
+const isDiff = ref(false)
 
 // 差异弹窗
 const dialogVisible = ref(false)
@@ -27,6 +29,24 @@ const handleDiff = (item) => {
     dialogVisible.value = true
 }
 
+// 记录当前切换仅差异时的数据有多少
+let difflength = ref()
+
+// 仅显示差异
+const handleCheck = (e) => {
+    const isDiff = e ? false : true
+
+    if (visibleItems.value.length !== 0) difflength.value = visibleItems.value.length
+    // 获取展示数据
+    myDiff.getdiffList(isDiff)
+    // 重置滚动i
+    i.value = difflength.value / 10
+    // 清空
+    visibleItems.value.length = 0
+    diffArr.value = myDiff.getList()
+    if (diffArr.value.length !== 0) visibleItems.value.push(...diffArr.value.slice(0, difflength.value));
+}
+
 onMounted(() => {
     diffArr.value = myDiff.getList()
 })
@@ -35,16 +55,23 @@ onMounted(() => {
 </script>
 
 <template>
-    <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
-        <div v-for="(item, index) in visibleItems" class="infinite-list-item">
-            <pre
-                v-if="item.text"><span class="span_index span_no">{{ index + 1 }}</span><span class="span_index span_no">{{ index + 1 }}</span><span class="span_box"></span>{{ item.text }}</pre>
-            <pre style="color: black;background: #ffebe9;"
-                v-if="item.content1"><span class="span_index span_del">{{ index + 1 }}</span><span class="span_index span_del"></span><span class="span_box span_shou" @click="handleDiff(item)">-</span>{{ item.content1 }}</pre>
-            <pre style="color: black;background: #e6ffec;"
-                v-if="item.content2"><span class="span_index span_add"></span><span class="span_index span_add">{{ index + 1 }}</span><span class="span_box span_shou"  @click="handleDiff(item)">+</span>{{ item.content2 }}</pre>
+    <div class="main_body">
+        <div style="width: 80%;">
+            <el-checkbox v-model="isDiff" label="仅显示差异" size="large" @change="handleCheck" />
         </div>
-    </ul>
+
+        <ul v-infinite-scroll="load" class="infinite-list" style="overflow: auto">
+            <div v-for="item in visibleItems" class="infinite-list-item">
+                <pre
+                    v-if="item.text"><span class="span_index span_no">{{ item.line }}</span><span class="span_index span_no">{{ item.line }}</span><span class="span_box"></span>{{ item.text }}</pre>
+                <pre style="color: black;background: #ffebe9;"
+                    v-if="item.content1"><span class="span_index span_del">{{ item.line }}</span><span class="span_index span_del"></span><span class="span_box span_shou" @click="handleDiff(item)">-</span>{{ item.content1 }}</pre>
+                <pre style="color: black;background: #e6ffec;"
+                    v-if="item.content2"><span class="span_index span_add"></span><span class="span_index span_add">{{ item.line }}</span><span class="span_box span_shou"  @click="handleDiff(item)">+</span>{{ item.content2 }}</pre>
+            </div>
+            <div v-if="visibleItems.length === 0">当前文件暂无修改或新增文件</div>
+        </ul>
+    </div>
 
     <el-dialog v-model="dialogVisible" :close-on-click-modal="false" :close-on-press-escape="false"
         :title="`第${dialogContent.line}行差异`" width="50%" :before-close="handleDiff">
@@ -65,6 +92,14 @@ onMounted(() => {
 </template>
 
 <style lang="less" scoped>
+.main_body {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .diff_pre {
     height: 30px;
     line-height: 30px;

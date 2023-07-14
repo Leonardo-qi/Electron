@@ -8,7 +8,7 @@ const router = useRouter()
 
 const activeIndex = ref('1')
 const handleSelect = (key) => {
-    const path = key == 1 ? '/fileUpdatePage/index' : '/ads'
+    const path = key == 1 ? '/fileUpdatePage/index' : '/localFilePage/index'
     router.push(path)
 }
 </script>
@@ -17,8 +17,8 @@ const handleSelect = (key) => {
     <div class="layout">
         <div class="layout-menu">
             <el-menu :default-active="activeIndex" mode="horizontal" @select="handleSelect">
-                <el-menu-item index="1">文件更新</el-menu-item>
-                <el-menu-item index="2">文件对比</el-menu-item>
+                <el-menu-item index="1">远程文件更新</el-menu-item>
+                <el-menu-item index="2">本地文件更新</el-menu-item>
             </el-menu>
         </div>
         <div class="layout-content">

@@ -10,8 +10,9 @@ const newObj = '{"a":1,"s":"1"}'
 
 // 服务地址
 const serviceUrl = [
-    { label: 'http://172.17.17.81:10205/v2/api-docs', value: '/api/v2/api-docs' },
-    { label: 'http://172.17.17.81:10205/v3/api-docs', value: '/api/v3/api-docs' },
+    { label: 'v2', value: '/api/v2/api-docs' },
+    { label: 'v3', value: '/api/v3/api-docs' },
+    // { label: 'http://172.17.17.81:10205/v3/api-docs', value: '/api/v3/api-docs' },
     { label: '本地内容', value: 1 },
 ]
 
@@ -47,8 +48,6 @@ const ruleFormRefArr = ref([
                 { required: true, message: '请选择文件路径', trigger: 'blur' },
             ],
         },
-        isFile: false,
-        isDetail: false,
     }
 ])
 
@@ -88,9 +87,15 @@ const checkFile = async (index) => {
     const isfileForm = Object.values(fileForm).every(item => item)
     if (!isfileForm) return ElMessage.error('请完整文件信息！')
     const filePath = `${fileForm.fileUrl}/${fileForm.name}${fileForm.fileFormat}`
-    const oldValue = await myApi.readFile(filePath)
-    const size = await myApi.fileSize(filePath)
-    myApi.checkFileBox({ oldValue, size }, filePath)
+    let oldValue = ''
+    try {
+        oldValue = await myApi.readFile(filePath)
+        const size = await myApi.fileSize(filePath)
+        myApi.checkFileBox({ oldValue, size }, filePath)
+    } catch (err){
+        ElMessage.error(`当前目录没有${fileForm.name}${fileForm.fileFormat}文件`)
+    }
+
 }
 
 // 将内容写入文件
@@ -157,16 +162,6 @@ const handleAdd = () => {
     })
 }
 
-
-
-// 文件名称
-const handlefileName = (index) => {
-    ruleFormRefArr.value[index].isFile = true
-}
-const fileBlur = (index) => {
-    ruleFormRefArr.value[index].isFile = false
-}
-
 onBeforeMount(() => {
     const storage = localStorage.getItem('ruleFormRefArr')
     if (storage) ruleFormRefArr.value = JSON.parse(storage)
@@ -175,11 +170,6 @@ onBeforeMount(() => {
 onBeforeUnmount(() => {
     localStorage.setItem('ruleFormRefArr', JSON.stringify(ruleFormRefArr.value))
 })
-
-onMounted(() => {
-
-})
-
 </script>
 
 <template>
@@ -197,20 +187,8 @@ onMounted(() => {
                 </div>
                 <el-form :model="item.fileForm" ref="ruleFormRef" label-width="100px" :rules="item.rules">
                     <el-form-item label="文件名：" prop="name">
-                        <!-- 展示文件名 -->
-                        <el-tooltip class="box-item" effect="dark" v-if="item.fileForm.name && !item.isFile"
-                            :content="item.fileForm.name" placement="bottom-start">
-                            <span class="span_box span_hidden" @click="handlefileName(index)">{{
-                                item.fileForm.name }}</span>
-                        </el-tooltip>
-                        <!-- 提示输入文件名 -->
-                        <span class="span_box" v-else-if="!item.fileForm.name && !item.isFile"
-                            @click="handlefileName(index)">文件名称
-                            <EditPen style="width: 10px;height: 10px;" />
-                        </span>
-                        <!-- 输入框 -->
-                        <el-input v-else-if="item.isFile" class="input_width" v-model="item.fileForm.name"
-                            placeholder="请输出文件名称" @blur="fileBlur(index)" />
+                        <el-input  class="input_width" v-model="item.fileForm.name"
+                            placeholder="请输出文件名称" />
                     </el-form-item>
                     <el-form-item label="文件格式：" prop="fileFormat">
                         <el-select v-model="item.fileForm.fileFormat" placeholder="请选择文件格式">
@@ -315,6 +293,7 @@ onMounted(() => {
                 border-bottom: 1px solid #b9b8b8;
                 align-items: center;
                 padding: 0 20px;
+                margin: 10px 0;
             }
 
             .input_width {
@@ -333,17 +312,5 @@ onMounted(() => {
             }
         }
     }
-}
-
-/deep/.el-form-item {
-    margin-bottom: 0;
-}
-
-/deep/.el-input__wrapper {
-    border: none !important;
-    border-radius: 0% !important;
-    border-bottom: 1px solid red !important;
-    box-shadow: none !important;
-    padding: 0px; //前边边距去掉
 }
 </style>

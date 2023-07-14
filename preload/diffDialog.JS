@@ -1,18 +1,23 @@
 // 在渲染进程中接收参数
-const { log } = require('console');
 const { ipcRenderer, contextBridge } = require('electron');
 
-let dataObj = []
+let dataObj = {}
+let diffData = []
 
 ipcRenderer.on('value', (event, data) => {
-    dataObj = compareFiles(JSON.stringify(JSON.parse(data.oldValue), null, 2), JSON.stringify(JSON.parse(data.newValue), null, 2));
+    dataObj = data
+    diffData = compareFiles(JSON.stringify(JSON.parse(data.oldValue), null, 2), JSON.stringify(JSON.parse(data.newValue), null, 2));
 });
 
-const getList = () => {
-    return dataObj
+const getdiffList = (isDiff) => {
+    diffData = compareFiles(JSON.stringify(JSON.parse(dataObj.oldValue), null, 2), JSON.stringify(JSON.parse(dataObj.newValue), null, 2), isDiff);
 }
 
-const compareFiles = (file1, file2) => {
+const getList = () => {
+    return diffData
+}
+
+const compareFiles = (file1, file2, isDiff = true) => {
     const lines1 = file1.split('\n');
     const lines2 = file2.split('\n');
     const diff = [];
@@ -24,16 +29,19 @@ const compareFiles = (file1, file2) => {
                 content1: lines1[i] || '',
                 content2: lines2[i] || ''
             });
-        }else{
-            diff.push({
-                line: i + 1,
-                text: lines1[i] || '',
-            });
+        } else {
+            if (isDiff) {
+                diff.push({
+                    line: i + 1,
+                    text: lines1[i] || '',
+                });
+            }
         }
     }
     return diff;
 }
 
 contextBridge.exposeInMainWorld('myDiff', {
-    getList
+    getList,
+    getdiffList
 })

@@ -6,7 +6,7 @@ const homePage = () => import('../views/homePage.vue')
 const fileUpdatePage = () => import('../views/fileUpdatePage/index.vue')
 const fileDiff = () => import('../views/fileDiff.vue')
 const checkFile = () => import('../views/checkFile/index.vue')
-const ads = () => import('../views/ads.vue')
+const localFilePage = () => import('../views/localFilePage/index.vue')
 
 
 
@@ -33,9 +33,9 @@ const router = createRouter({
                     component: fileUpdatePage
                 },
                 {
-                    path: '/ads',
-                    name: 'ads',
-                    component: ads
+                    path: '/localFilePage/index',
+                    name: 'localFilePage',
+                    component: localFilePage
                 },
             ]
         },
